@@ -146,18 +146,18 @@ public class Decryption {
     private char antiRotateLetterBy7(char c) {
         if (this.chars.indexOf(c) < 26) {
 
-            if (c < 116) {
-                c += 7;
+            if (c > 102) {
+                c -= 7;
             } else {
-                c -= 19;
+                c += 19;
             }
 
         } else if (this.chars.indexOf(c) < 52) {
 
-            if (c < 84) {
-                c += 7;
+            if (c > 71) {
+                c -= 7;
             } else {
-                c -= 19;
+                c += 19;
             }
 
         }

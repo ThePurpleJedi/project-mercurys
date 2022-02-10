@@ -8,18 +8,20 @@ import java.util.List;
 public class Encryption {
 
     private final String specialChars;
+    private final char[] key;
     private String chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
-    private final char[] key = new char[this.chars.length()];
     private String[] words;
 
     public Encryption(final String specialChars) {
         this.specialChars = specialChars;
-        this.chars += specialChars;
+        this.chars = this.chars + specialChars;
+        this.key = new char[this.chars.length()];
     }
 
     public Encryption() {
         this.specialChars = "!(),–.:;?’'-*/+=<>{}[]#@^&";
-        this.chars += this.specialChars;
+        this.chars = this.chars + this.specialChars;
+        this.key = new char[this.chars.length()];
     }
 
     public String encrypt(final String msg) {
