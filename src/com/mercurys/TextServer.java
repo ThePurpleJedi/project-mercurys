@@ -14,7 +14,7 @@ public class TextServer {
 
     private TextServer(final int port) {
         try (final ServerSocket serverSocket = new ServerSocket()) {
-            serverSocket.bind(new InetSocketAddress("localhost", port));
+            serverSocket.bind(new InetSocketAddress("192.168.0.151", port));
             System.out.println("""
                     Server initiated.
                     Waiting for client...""");
@@ -39,7 +39,7 @@ public class TextServer {
     private void talk() {
         try {
             final ReadThread readThread = new ReadThread(this.socket,
-                    "client1" + this.socket.getLocalAddress().toString());
+                    "[MClient1" + this.socket.getInetAddress().toString() + "]");
 
             readThread.start();
             this.writeToClient();

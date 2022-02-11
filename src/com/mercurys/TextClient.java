@@ -33,15 +33,15 @@ public class TextClient {
 
     private static String getHostAddress() {
         final Scanner sc = new Scanner(System.in);
-        System.out.println("Enter server host address [IP] or press 1 for localhost:");
+        System.out.println("Enter server host IP address or press 1 for default address:");
         final String hostAddress = sc.next();
-        return (hostAddress.equals("1"))? "localhost" : hostAddress;
+        return (hostAddress.equals("1"))? "192.168.0.151" : hostAddress;
     }
 
     private void talk() {
         try {
             final ReadThread readThread = new ReadThread(this.socket,
-                    "client1" + this.socket.getLocalAddress().toString());
+                    "[MHost" + this.socket.getLocalAddress().toString() + "]");
 
             readThread.start();
             this.writeToServer();
