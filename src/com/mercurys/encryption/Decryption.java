@@ -1,9 +1,6 @@
 package com.mercurys.encryption;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class Decryption {
 
@@ -15,6 +12,26 @@ public class Decryption {
         this.actualMessageLength = 0;
         this.chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
         this.key = "";
+    }
+
+    /**
+     * Runs the entire decryption algorithm in order
+     */
+    public String decrypt(final String msg) {
+
+        if (msg == null) {
+            return null;
+        }
+
+        String[] words = msg.split(" +");
+
+        key = this.extractKeyAndNullifyEmbeddedKeyFragments(words);
+        words = Decryption.removeAllNullElements(words);
+        this.reTranslateMessageUsingKey(words);
+        words = this.perfectSquareReSwap(words);
+        words = this.unReverseMessage(words);
+        this.antiRotateBy7(words);
+        return Decryption.getFinalDecryptedMessage(words);
     }
 
     /**
@@ -41,30 +58,10 @@ public class Decryption {
     }
 
     /**
-     * Runs the entire decryption algorithm in order
-     */
-    public String decrypt(final String msg) {
-
-        if (msg == null) {
-            return null;
-        }
-
-        String[] words = msg.split(" +");
-
-        this.extractKey(words);
-        words = Decryption.removeAllNullElements(words);
-        this.reTranslateMessageUsingKey(words);
-        words = this.perfectSquareReSwap(words);
-        words = this.unReverseMessage(words);
-        this.antiRotateBy7(words);
-        return Decryption.getFinalDecryptedMessage(words);
-    }
-
-    /**
      * Extracts the key from the given message, updates the KEY variable.
      * Removes key from the message and updates the words[] array
      */
-    private void extractKey(final String[] words) {
+    private String extractKeyAndNullifyEmbeddedKeyFragments(final String[] words) {
         int l = words.length - 1;
         final StringBuilder keyBuilder = new StringBuilder();
         this.chars += words[0];
@@ -72,14 +69,14 @@ public class Decryption {
         for (int i = 1; i < words.length; i++) {
             if (words[i].charAt(0) == '~' && words[i].charAt(words[i].length() - 1) == '~') {
                 for (final char c : words[i].toCharArray()) {
-                    keyBuilder.append((c != '~') ? c : "");
+                    keyBuilder.append((c != '~')? c : "");
                 }
                 words[i] = null;
                 l--;
             }
         }
         this.actualMessageLength = l;
-        this.key = keyBuilder.toString();
+        return keyBuilder.toString();
     }
 
     /**
@@ -163,5 +160,17 @@ public class Decryption {
         }
 
         return c;
+    }
+
+    public String getKeyFromMessage(String[] words) {
+        StringBuilder keyBuilder = new StringBuilder();
+        for (int i = 1; i < words.length; i++) {
+            if (words[i].charAt(0) == '~' && words[i].charAt(words[i].length() - 1) == '~') {
+                for (final char c : words[i].toCharArray()) {
+                    keyBuilder.append((c != '~')? c : "");
+                }
+            }
+        }
+        return keyBuilder.toString();
     }
 }

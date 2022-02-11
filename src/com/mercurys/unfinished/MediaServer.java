@@ -1,14 +1,13 @@
 package com.mercurys.unfinished;
 
 import com.mercurys.encryption.Encryption;
-import com.mercurys.threads.ReadThread;
+import com.mercurys.threads.ReadMediaThread;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.net.InetSocketAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.*;
+import java.net.*;
+import java.nio.ByteBuffer;
 import java.util.Scanner;
 
 public class MediaServer {
@@ -37,7 +36,21 @@ public class MediaServer {
         final MediaServer mediaServer = new MediaServer(4444);
         mediaServer.talk();
 
-        System.out.println("Thank you for using Project Iris!");
+        System.out.println("Thank you for using Project Mercurys!");
+    }
+
+    private void talk() {
+        try {
+            final ReadMediaThread readMediaThread = new ReadMediaThread(this.socket,
+                    "client1" + this.socket.getLocalAddress().toString());
+
+            readMediaThread.start();
+            this.writeToClient();
+
+            this.closeConnection(readMediaThread);
+        } catch (final IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void writeToClient() {
@@ -47,29 +60,42 @@ public class MediaServer {
         String outGoingLine = scanner.nextLine();
 
         while (!outGoingLine.equals("-x-")) {
-            writer.println(encryption.encrypt(outGoingLine));
+            if (outGoingLine.startsWith("/image")) {
+                this.handleImageUpload(writer, outGoingLine.substring(7));
+            } else {
+                writer.println(encryption.encrypt(outGoingLine));
+            }
             outGoingLine = scanner.nextLine();
         }
         writer.println(encryption.encrypt("Connection closed by server."));
     }
 
-    private void closeConnection(final ReadThread readThread) throws IOException {
-        readThread.exitThread();
+    private void handleImageUpload(final PrintWriter writer, final String outGoingLine) {
+        try {
+            writer.println(new Encryption().encrypt("/image incoming!"));
+            this.sendImageFileAsByteStream(outGoingLine);
+            System.out.println("[Mercurys:] Image sent!");
+        } catch (final IOException e) {
+            System.out.println("Exception Occurred!");
+            e.printStackTrace();
+        }
+    }
+
+    private void sendImageFileAsByteStream(final String imageFileName) throws IOException {
+        final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        final BufferedImage bufferedImage = ImageIO.read(new File(imageFileName));
+        ImageIO.write(bufferedImage, "png", byteArrayOutputStream);
+
+        final byte[] size = ByteBuffer.allocate(4).putInt(byteArrayOutputStream.size()).array();
+
+        this.outputStream.write(size);
+        this.outputStream.write(byteArrayOutputStream.toByteArray());
+    }
+
+    private void closeConnection(final ReadMediaThread readMediaThread) throws IOException {
+        readMediaThread.exitThread();
         this.socket.close();
         this.outputStream.close();
         System.out.println("Closing connection... Goodbye!");
-    }
-
-    private void talk() {
-        try {
-            final ReadThread readThread = new ReadThread(this.socket, "client1" + this.socket.getLocalAddress().toString());
-
-            readThread.start();
-            this.writeToClient();
-
-            this.closeConnection(readThread);
-        } catch (final IOException e) {
-            e.printStackTrace();
-        }
     }
 }

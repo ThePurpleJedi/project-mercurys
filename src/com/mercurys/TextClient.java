@@ -3,9 +3,7 @@ package com.mercurys;
 import com.mercurys.encryption.Encryption;
 import com.mercurys.threads.ReadThread;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
 import java.util.Scanner;
 
@@ -30,17 +28,31 @@ public class TextClient {
     public static void main(final String[] args) {
         final TextClient client = new TextClient(getHostAddress(), 4444);
         client.talk();
-        System.out.println("Thank you for using Project Iris!");
+        System.out.println("Thank you for using Project Mercurys!");
     }
 
     private static String getHostAddress() {
         final Scanner sc = new Scanner(System.in);
         System.out.println("Enter server host address [IP] or press 1 for localhost:");
         final String hostAddress = sc.next();
-        return (hostAddress.equals("1")) ? "localhost" : hostAddress;
+        return (hostAddress.equals("1"))? "localhost" : hostAddress;
     }
 
-    private void writeToServer() throws IOException {
+    private void talk() {
+        try {
+            final ReadThread readThread = new ReadThread(this.socket,
+                    "client1" + this.socket.getLocalAddress().toString());
+
+            readThread.start();
+            this.writeToServer();
+
+            this.closeConnection(readThread);
+        } catch (final IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void writeToServer() {
         final Encryption encryption = new Encryption();
         final PrintWriter writer = new PrintWriter(this.outputStream, true);
         final Scanner scanner = new Scanner(System.in);
@@ -58,18 +70,5 @@ public class TextClient {
         this.socket.close();
         this.outputStream.close();
         System.out.println("Closing connection... Goodbye!");
-    }
-
-    private void talk() {
-        try {
-            final ReadThread readThread = new ReadThread(this.socket, "client1" + this.socket.getLocalAddress().toString());
-
-            readThread.start();
-            this.writeToServer();
-
-            this.closeConnection(readThread);
-        } catch (final IOException e) {
-            e.printStackTrace();
-        }
     }
 }

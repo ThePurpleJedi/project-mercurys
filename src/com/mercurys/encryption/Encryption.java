@@ -1,9 +1,6 @@
 package com.mercurys.encryption;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class Encryption {
 
@@ -65,6 +62,28 @@ public class Encryption {
         }
     }
 
+    private char rotateLetterBy7(char c) {
+        if (this.chars.indexOf(c) < 26) {
+
+            if (c < 116) {
+                c += 7;
+            } else {
+                c -= 19;
+            }
+
+        } else if (this.chars.indexOf(c) < 52) {
+
+            if (c < 84) {
+                c += 7;
+            } else {
+                c -= 19;
+            }
+
+        }
+
+        return c;
+    }
+
     private void reverse() {
         final StringBuilder msg = new StringBuilder();
 
@@ -99,7 +118,7 @@ public class Encryption {
             final char[] letters = this.words[i].toCharArray();
 
             for (int j = 0; j < letters.length; j++) {
-                letters[j] = (letters[j] != '|') ? this.key[this.chars.indexOf(letters[j])] : '|';
+                letters[j] = (letters[j] != '|')? this.key[this.chars.indexOf(letters[j])] : '|';
             }
 
             this.words[i] = String.valueOf(letters);
@@ -144,28 +163,6 @@ public class Encryption {
         encryptedMessage.append("~");
 
         return encryptedMessage.toString();
-    }
-
-    private char rotateLetterBy7(char c) {
-        if (this.chars.indexOf(c) < 26) {
-
-            if (c < 116) {
-                c += 7;
-            } else {
-                c -= 19;
-            }
-
-        } else if (this.chars.indexOf(c) < 52) {
-
-            if (c < 84) {
-                c += 7;
-            } else {
-                c -= 19;
-            }
-
-        }
-
-        return c;
     }
 
     private String getKeyFragment(final int startIndex, final int endIndex) {

@@ -1,62 +1,44 @@
 package com.mercurys.threads;
 
 import com.mercurys.encryption.Decryption;
-import com.mercurys.unfinished.Imagician;
 
-import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.Socket;
-import java.net.SocketException;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.*;
+import java.net.*;
+import java.nio.ByteBuffer;
+import java.nio.file.*;
+import java.text.MessageFormat;
 import java.util.Scanner;
 
 public class ReadMediaThread extends Thread {
 
+    private final Decryption decryption = new Decryption();
+    private final Scanner sc = new Scanner(System.in);
+    private final BufferedReader reader;
     private final String sentBy;
-    private DataInputStream clientStream;
+    private DataInputStream inputStream;
     private boolean exit;
+    private int i;
 
     public ReadMediaThread(final Socket socket, final String sentBy) throws IOException {
         if (!socket.isClosed()) {
-            this.clientStream = new DataInputStream(socket.getInputStream());
+            this.inputStream = new DataInputStream(socket.getInputStream());
         }
+        reader = new BufferedReader(new InputStreamReader(this.inputStream));
         this.sentBy = sentBy;
         this.exit = false;
+        this.i = 0;
     }
 
     @Override
     public void run() {
-        final Decryption decryption = new Decryption();
-        final Scanner sc = new Scanner(System.in);
-        final Imagician imagician = new Imagician();
-        int i = 1;
         try {
             if (this.exit) {
                 this.interrupt();
             }
 
-            final BufferedReader reader = new BufferedReader(new InputStreamReader(this.clientStream));
-            String inBoundLine = "";
-
-            while (!inBoundLine.equals("-x-")) {
-                inBoundLine = reader.readLine();
-                if (inBoundLine == null) {
-                    break;
-                }
-                if (decryption.decrypt(inBoundLine).startsWith("/image")) {
-                    System.out.println("Note: The user is attempting to send you an image file. " +
-                            "Do you wish to download it? [Y/n]");
-                    final String perm = sc.next();
-                    if (perm.equals("Y") || perm.equals("y")) {
-                        final String downloadPath = System.getProperty("user.home") + "/ReceivedImage%d.jpg".formatted(i++);
-                        imagician.convertTextToImage(inBoundLine.split(" +")[1], downloadPath);
-                        //What's the best way to get the download path
-                        System.out.println("The file has been downloaded, please check your images folder");
-                    }
-                }
-                System.out.println(this.sentBy + ": " + decryption.decrypt(inBoundLine));
-            }
+            this.readAndPrintMessages(reader);
             this.exitThread();
 
         } catch (final SocketException s) {
@@ -67,7 +49,65 @@ public class ReadMediaThread extends Thread {
         }
     }
 
-    private void exitThread() {
+    private void readAndPrintMessages(final BufferedReader reader) throws IOException {
+        String inBoundLine = "";
+        while (!inBoundLine.equals("-x-")) {
+            inBoundLine = reader.readLine();
+            if (inBoundLine == null) {
+                break;
+            } else if (inBoundLine.startsWith("/image")) {
+                final BufferedImage image = this.getImageAsBufferedImage();
+                this.downloadBufferedImage(image);
+                //TODO: Why is it printing the byte array
+            } else {
+                System.out.println(inBoundLine);
+                System.out.println(this.sentBy + ": " + this.decryption.decrypt(inBoundLine));
+            }
+        }
+    }
+
+    private void downloadBufferedImage(final BufferedImage image) {
+        if (image == null) {
+            return;
+        }
+        final String s = System.getProperty("file.separator");
+        final String downloadPath =
+                MessageFormat.format("{0}{1}Pictures{1}Mercurys{1}ReceivedImage{2}.png",
+                        System.getProperty("user.home"), s, this.i++);
+        try {
+            Files.createDirectories(Paths.get(downloadPath.substring(0, downloadPath.lastIndexOf(s)) + s));
+            ImageIO.write(image, "png", new File(downloadPath));
+        } catch (final IOException e) {
+            e.printStackTrace();
+        }
+        System.out.println("The image file has been downloaded as " + downloadPath);
+    }
+
+    private BufferedImage getImageAsBufferedImage() {
+        System.out.println("[Mercurys]: Attention! " +
+                "The user at the other end is attempting to send you an image file. " +
+                "\nDo you wish to download it? [Y/n]");
+
+        final String perm = this.sc.next();
+        if (perm.equalsIgnoreCase("Y")) {
+            try {
+                final byte[] imgSize = new byte[4];
+                this.inputStream.readFully(imgSize);
+                final byte[] imgArr = new byte[ByteBuffer.wrap(imgSize).asIntBuffer().get()];
+                this.inputStream.readFully(imgArr);
+                return ImageIO.read(new ByteArrayInputStream(imgArr));
+
+            } catch (final IOException e) {
+                System.out.println("Exception Occurred!");
+                e.printStackTrace();
+                return null;
+            }
+        } else {
+            return null;
+        }
+    }
+
+    public void exitThread() {
         this.exit = true;
         this.interrupt();
     }

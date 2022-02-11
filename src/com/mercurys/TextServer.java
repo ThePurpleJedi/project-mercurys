@@ -3,12 +3,8 @@ package com.mercurys;
 import com.mercurys.encryption.Encryption;
 import com.mercurys.threads.ReadThread;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.net.InetSocketAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.io.*;
+import java.net.*;
 import java.util.Scanner;
 
 public class TextServer {
@@ -37,7 +33,21 @@ public class TextServer {
         final TextServer textServer = new TextServer(4444);
         textServer.talk();
 
-        System.out.println("Thank you for using Project Iris!");
+        System.out.println("Thank you for using Project Mercurys!");
+    }
+
+    private void talk() {
+        try {
+            final ReadThread readThread = new ReadThread(this.socket,
+                    "client1" + this.socket.getLocalAddress().toString());
+
+            readThread.start();
+            this.writeToClient();
+
+            this.closeConnection(readThread);
+        } catch (final IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void writeToClient() {
@@ -58,18 +68,5 @@ public class TextServer {
         this.socket.close();
         this.outputStream.close();
         System.out.println("Closing connection... Goodbye!");
-    }
-
-    private void talk() {
-        try {
-            final ReadThread readThread = new ReadThread(this.socket, "client1" + this.socket.getLocalAddress().toString());
-
-            readThread.start();
-            this.writeToClient();
-
-            this.closeConnection(readThread);
-        } catch (final IOException e) {
-            e.printStackTrace();
-        }
     }
 }

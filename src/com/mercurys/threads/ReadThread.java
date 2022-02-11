@@ -2,12 +2,8 @@ package com.mercurys.threads;
 
 import com.mercurys.encryption.Decryption;
 
-import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.Socket;
-import java.net.SocketException;
+import java.io.*;
+import java.net.*;
 
 public class ReadThread extends Thread {
 
