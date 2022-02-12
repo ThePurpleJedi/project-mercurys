@@ -100,4 +100,3 @@ public class MediaClient {
         System.out.println("Closing connection... Goodbye!");
     }
 }
-

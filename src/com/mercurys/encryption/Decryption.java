@@ -6,10 +6,9 @@ public class Decryption {
 
     private String chars;
     private String key;
-    private int actualMessageLength;
+    private int actualMessageLength = 0;
 
     public Decryption() {
-        this.actualMessageLength = 0;
         this.chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
         this.key = "";
     }
@@ -30,7 +29,7 @@ public class Decryption {
         this.reTranslateMessageUsingKey(words);
         words = this.perfectSquareReSwap(words);
         words = this.unReverseMessage(words);
-        this.antiRotateBy7(words);
+        this.antiRotateMessageBy7(words);
         return Decryption.getFinalDecryptedMessage(words);
     }
 
@@ -124,7 +123,7 @@ public class Decryption {
     /**
      * Rotates the letters back by 7
      */
-    private void antiRotateBy7(final String[] words) {
+    private void antiRotateMessageBy7(final String[] words) {
         for (int i = 0; i < words.length; i++) {
             final StringBuilder encodedWord = new StringBuilder();
 

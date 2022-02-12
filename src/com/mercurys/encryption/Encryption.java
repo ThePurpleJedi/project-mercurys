@@ -96,7 +96,6 @@ public class Encryption {
             }
             key[i] = c;
         }
-        System.out.println("key length = " + key.length);
     }
 
     private void translateUsingKey(String[] words, char[] key) {

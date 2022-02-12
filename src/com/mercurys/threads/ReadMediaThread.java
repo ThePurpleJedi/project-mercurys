@@ -8,18 +8,17 @@ import java.io.*;
 import java.net.*;
 import java.nio.ByteBuffer;
 import java.nio.file.*;
-import java.text.MessageFormat;
-import java.util.Scanner;
+import java.text.*;
+import java.util.Calendar;
 
 public class ReadMediaThread extends Thread {
 
     private final Decryption decryption = new Decryption();
-    private final Scanner sc = new Scanner(System.in);
     private final BufferedReader reader;
     private final String sentBy;
     private DataInputStream inputStream;
     private boolean exit;
-    private int i;
+
 
     public ReadMediaThread(final Socket socket, final String sentBy) throws IOException {
         if (!socket.isClosed()) {
@@ -28,7 +27,6 @@ public class ReadMediaThread extends Thread {
         reader = new BufferedReader(new InputStreamReader(this.inputStream));
         this.sentBy = sentBy;
         this.exit = false;
-        this.i = 0;
     }
 
     @Override
@@ -55,12 +53,10 @@ public class ReadMediaThread extends Thread {
             inBoundLine = reader.readLine();
             if (inBoundLine == null) {
                 break;
-            } else if (inBoundLine.startsWith("/image")) {
+            } else if (decryption.decrypt(inBoundLine).startsWith("/image")) {
                 final BufferedImage image = this.getImageAsBufferedImage();
                 this.downloadBufferedImage(image);
-                //TODO: Why is it printing the byte array
-            } else {
-                System.out.println(inBoundLine);
+            } else if (decryption.getKeyFromMessage(inBoundLine.split(" +")).length() == 88) {
                 System.out.println(this.sentBy + ": " + this.decryption.decrypt(inBoundLine));
             }
         }
@@ -72,37 +68,33 @@ public class ReadMediaThread extends Thread {
         }
         final String s = System.getProperty("file.separator");
         final String downloadPath =
-                MessageFormat.format("{0}{1}Pictures{1}Mercurys{1}ReceivedImage{2}.png",
-                        System.getProperty("user.home"), s, this.i++);
+                MessageFormat.format("{0}{1}Pictures{1}Mercurys{1}{3}{1}ReceivedImage{2}.png",
+                        System.getProperty("user.home"), s, new SimpleDateFormat("HHmmss")
+                                .format(Calendar.getInstance().getTime()), new SimpleDateFormat("dd.MM.yyyy")
+                                .format(Calendar.getInstance().getTime()));
         try {
             Files.createDirectories(Paths.get(downloadPath.substring(0, downloadPath.lastIndexOf(s)) + s));
             ImageIO.write(image, "png", new File(downloadPath));
         } catch (final IOException e) {
             e.printStackTrace();
         }
-        System.out.println("The image file has been downloaded as " + downloadPath);
+        System.out.println("[M. Console]: The image file has been downloaded as " + downloadPath);
     }
 
     private BufferedImage getImageAsBufferedImage() {
-        System.out.println("[Mercurys]: Attention! " +
-                "The user at the other end is attempting to send you an image file. " +
-                "\nDo you wish to download it? [Y/n]");
+        System.out.println("[M. Console]: Attention! " +
+                "The user at the other end is attempting to send you an image file.");
+        System.out.println("[M. Console]: Reading image file...");
+        try {
+            final byte[] imgSize = new byte[4];
+            this.inputStream.readFully(imgSize);
+            final byte[] imgArr = new byte[ByteBuffer.wrap(imgSize).asIntBuffer().get()];
+            this.inputStream.readFully(imgArr);
+            return ImageIO.read(new ByteArrayInputStream(imgArr));
 
-        final String perm = this.sc.next();
-        if (perm.equalsIgnoreCase("Y")) {
-            try {
-                final byte[] imgSize = new byte[4];
-                this.inputStream.readFully(imgSize);
-                final byte[] imgArr = new byte[ByteBuffer.wrap(imgSize).asIntBuffer().get()];
-                this.inputStream.readFully(imgArr);
-                return ImageIO.read(new ByteArrayInputStream(imgArr));
-
-            } catch (final IOException e) {
-                System.out.println("Exception Occurred!");
-                e.printStackTrace();
-                return null;
-            }
-        } else {
+        } catch (final IOException e) {
+            System.out.println("Exception Occurred!");
+            e.printStackTrace();
             return null;
         }
     }
