@@ -5,60 +5,45 @@ import java.util.*;
 public class Encryption {
 
     private final String specialChars;
-    private final char[] key;
     private String chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
-    private String[] words;
 
     public Encryption(final String specialChars) {
         this.specialChars = specialChars;
         this.chars = this.chars + specialChars;
-        this.key = new char[this.chars.length()];
     }
 
     public Encryption() {
         this.specialChars = "!(),–.:;?’'-*/+=<>{}[]#@^&";
         this.chars = this.chars + this.specialChars;
-        this.key = new char[this.chars.length()];
     }
 
     public String encrypt(final String msg) {
 
-        //get input
-        this.words = msg.split(" +");
+        String[] words = msg.split(" +");
+        char[] key = new char[this.chars.length()];
 
-        //shift letters by 7 places
-        //we do not rotate the special chars or digits
-        this.rotateFullMessageBy7();
+        this.rotateFullMessageBy7(words);
+        words = this.reverse(words);
+        words = this.perfectSquareSwap(words);
+        this.generateRandomKey(key);
+        this.translateUsingKey(words, key);
 
-        //reverse letter sequence in individual words, and reverse word sequence in sentences
-        this.reverse();
-
-        //swap words at perfect square position
-        this.perfectSquareSwap();
-
-        //generate a random "key" for the message
-        this.generateRandomKey();
-
-        //translate the message using the encryption key
-        this.translateUsingKey();
-
-        //display final encrypted message, with attached encryption key in 8 letter fragments mixed into the message
-        return this.getFinalEncryptedMessage();
+        return this.getFinalEncryptedMessage(words, key);
     }
 
-    private void rotateFullMessageBy7() {
-        for (int i = 0; i < this.words.length; i++) {
+    private void rotateFullMessageBy7(String[] words) {
+        for (int i = 0; i < words.length; i++) {
             final StringBuilder encodedWord = new StringBuilder();
 
-            for (int j = 0; j < this.words[i].length(); j++) {
-                final char c = this.words[i].charAt(j);
+            for (int j = 0; j < words[i].length(); j++) {
+                final char c = words[i].charAt(j);
                 if (this.chars.indexOf(c) != -1) {
                     encodedWord.append(this.rotateLetterBy7(c));
                 } else if (c == '|') {
                     encodedWord.append(c);
                 }
             }
-            this.words[i] = encodedWord.toString();
+            words[i] = encodedWord.toString();
         }
     }
 
@@ -84,95 +69,93 @@ public class Encryption {
         return c;
     }
 
-    private void reverse() {
+    private String[] reverse(String[] words) {
         final StringBuilder msg = new StringBuilder();
 
-        for (int i = this.words.length - 1; i >= 0; i--) {
-            this.words[i] = new StringBuilder(this.words[i]).reverse().toString();
-            msg.append(this.words[i]).append(" ");
+        for (int i = words.length - 1; i >= 0; i--) {
+            words[i] = new StringBuilder(words[i]).reverse().toString();
+            msg.append(words[i]).append(" ");
         }
-        this.words = msg.toString().split(" +");
+        return msg.toString().split(" +");
     }
 
-    private void perfectSquareSwap() {
+    private String[] perfectSquareSwap(String[] words) {
         int n = 1;
-        final List<String> ls = new ArrayList<>(Arrays.asList(this.words));
-        for (int i = 1; i < this.words.length; i += 2 * (n++) + 1) {
+        final List<String> ls = new ArrayList<>(Arrays.asList(words));
+        for (int i = 1; i < words.length; i += 2 * (n++) + 1) {
             Collections.swap(ls, i, i - 1);
         }
-        this.words = ls.toArray(this.words);
+        return ls.toArray(words);
     }
 
-    private void generateRandomKey() {
-        for (int i = 0; i < this.key.length; i++) {
+    private void generateRandomKey(char[] key) {
+        for (int i = 0; i < key.length; i++) {
             char c = (char) (92 * Math.random() + 33);
-            while (String.valueOf(this.key).indexOf(c) != -1 || c == '|') {
+            while (String.valueOf(key).indexOf(c) != -1 || c == '|') {
                 c = (char) (92 * Math.random() + 33);
             }
-            this.key[i] = c;
+            key[i] = c;
         }
+        System.out.println("key length = " + key.length);
     }
 
-    private void translateUsingKey() {
-        for (int i = 0; i < this.words.length; i++) {
-            final char[] letters = this.words[i].toCharArray();
+    private void translateUsingKey(String[] words, char[] key) {
+        for (int i = 0; i < words.length; i++) {
+            final char[] letters = words[i].toCharArray();
 
             for (int j = 0; j < letters.length; j++) {
-                letters[j] = (letters[j] != '|')? this.key[this.chars.indexOf(letters[j])] : '|';
+                letters[j] = (letters[j] != '|')? key[this.chars.indexOf(letters[j])] : '|';
             }
 
-            this.words[i] = String.valueOf(letters);
+            words[i] = String.valueOf(letters);
         }
     }
 
-    private String getFinalEncryptedMessage() {
+    private String getFinalEncryptedMessage(String[] words, char[] key) {
         final StringBuilder encryptedMessage = new StringBuilder();
-        final int fragmentLength = 8;
-        final int fragmentNumber = this.key.length / 8;
-        int n = 1;
-        double k = Math.ceil((double) this.words.length / fragmentNumber);
+        int fragmentNumber = 0; //goes from 1 to fragmentNumber - 2
+
         encryptedMessage.append(this.specialChars);
-        encryptedMessage.append(" ~"); //print first key fragment
-        for (int i = 0; i < fragmentLength; i++) {
-            encryptedMessage.append(this.key[i]);
+        encryptedMessage.append(" ");
+        this.appendKeyFragment(key, fragmentNumber++, encryptedMessage);
+
+        for (int i = 0; i < words.length; i++) {
+            encryptedMessage.append(words[i]).append(" ");
+            fragmentNumber = addKeyFragmentsInMessage(encryptedMessage, key, i, words.length, fragmentNumber);
         }
-        encryptedMessage.append("~ ");
-
-        for (int i = 0; i < this.words.length; i++) {
-            encryptedMessage.append(this.words[i]).append(" ");
-
-            if (this.words.length > fragmentNumber) {
-                if (((int) k) == i && n < fragmentNumber - 1) {
-                    encryptedMessage.append(this.getKeyFragment(n, n + 1));
-                    k += Math.round((double) this.words.length / fragmentNumber);
-                    n++;
-                }
-            } else if (this.words.length > 1) {
-                if (i == this.words.length / 2 - 1) {
-                    encryptedMessage.append(this.getKeyFragment(1, 10));
-                }
-            } else {
-                encryptedMessage.append(this.getKeyFragment(1, 10));
-            }
-        } //mix the key in the message
-
-        encryptedMessage.append("~"); //print last key fragment
-        for (int i = 10 * fragmentLength; i < this.key.length; i++) {
-            encryptedMessage.append(this.key[i]);
-        }
-        encryptedMessage.append("~");
-
+        appendKeyFragment(key, fragmentNumber, encryptedMessage);
         return encryptedMessage.toString();
     }
 
-    private String getKeyFragment(final int startIndex, final int endIndex) {
-        final StringBuilder fragment = new StringBuilder();
-        fragment.append("~");
-        for (int j = startIndex * 8; j < endIndex * 8; j++) {
-            fragment.append(this.key[j]);
-        }
-        fragment.append("~ ");
+    private int addKeyFragmentsInMessage(StringBuilder encryptedMessage, char[] key, int i,
+                                         int numberOfWords, int fragmentNumber) {
 
-        return fragment.toString();
+        final int numberOfFragments = key.length / 8;
+        if (numberOfWords > numberOfFragments) {
+            double nextFragmentPosition = Math.ceil(fragmentNumber * (double) numberOfWords / numberOfFragments);
+            if (((int) nextFragmentPosition) == i && fragmentNumber < numberOfFragments - 1) {
+                this.appendKeyFragment(key, fragmentNumber, encryptedMessage);
+                fragmentNumber++;
+            }
+        } else if (numberOfWords > 1) {
+            if (i == numberOfWords / 2 - 1) {
+                for (; fragmentNumber < 10; fragmentNumber++) {
+                    this.appendKeyFragment(key, fragmentNumber, encryptedMessage);
+                }
+            }
+        } else {
+            for (; fragmentNumber < 10; fragmentNumber++) {
+                this.appendKeyFragment(key, fragmentNumber, encryptedMessage);
+            }
+        }
+        return fragmentNumber;
+    }
+
+    private void appendKeyFragment(char[] key, final int fragmentNumber, StringBuilder encryptedMessage) {
+        encryptedMessage.append("~");
+        for (int j = fragmentNumber * 8; j < (fragmentNumber + 1) * 8; j++) {
+            encryptedMessage.append(key[j]);
+        }
+        encryptedMessage.append("~ ");
     }
 }

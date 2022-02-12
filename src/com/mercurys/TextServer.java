@@ -14,9 +14,10 @@ public class TextServer {
 
     private TextServer(final int port) {
         try (final ServerSocket serverSocket = new ServerSocket()) {
-            serverSocket.bind(new InetSocketAddress("192.168.0.151", port));
+            String hostAddress = "192.168.0.151"; //replace with one's own LAN IP address
+            serverSocket.bind(new InetSocketAddress(hostAddress, port));
             System.out.println("""
-                    Server initiated.
+                    Server initialised.
                     Waiting for client...""");
 
             this.socket = serverSocket.accept();

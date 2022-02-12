@@ -5,10 +5,6 @@ W
 'src/com/mercurys/unfinished/ImagePixels,2/5/25ea4ac3533974b717c6c78a6993cdfb5ef3d110
 T
 $.idea/codeStyles/codeStyleConfig.xml,d/d/dd7b3350c29c49497756c7f32c69a3bed18b1cba
-[
-+src/com/mercurys/encryption/Decryption.java,6/f/6fd714eaba41a31dc0a7a23c9218cd342fb1b0ea
-[
-+src/com/mercurys/encryption/Encryption.java,9/6/96a1e0b4ba9cb3e7c1682f3a3f3038c902a29072
 X
 (src/com/mercurys/threads/ReadThread.java,e/1/e1cf1f9bdccfcc3052f34139833d66e98633d38f
 _
