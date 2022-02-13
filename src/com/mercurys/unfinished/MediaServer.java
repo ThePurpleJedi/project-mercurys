@@ -3,11 +3,8 @@ package com.mercurys.unfinished;
 import com.mercurys.encryption.Encryption;
 import com.mercurys.threads.ReadMediaThread;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.*;
-import java.nio.ByteBuffer;
 import java.util.Scanner;
 
 public class MediaServer {
@@ -17,7 +14,8 @@ public class MediaServer {
 
     private MediaServer(final int port) {
         try (final ServerSocket serverSocket = new ServerSocket()) {
-            serverSocket.bind(new InetSocketAddress("localhost", port));
+            String hostAddress = "192.168.0.151"; //replace with one's own LAN IP address
+            serverSocket.bind(new InetSocketAddress(hostAddress, port));
             System.out.println("""
                     Server initiated.
                     Waiting for client...""");
@@ -34,26 +32,26 @@ public class MediaServer {
 
     public static void main(final String[] args) {
         final MediaServer mediaServer = new MediaServer(4444);
-        mediaServer.talk();
+        mediaServer.startTalking();
 
         System.out.println("Thank you for using Project Mercurys!");
     }
 
-    private void talk() {
+    private void startTalking() {
         try {
-            final ReadMediaThread readMediaThread = new ReadMediaThread(this.socket,
-                    "client1" + this.socket.getLocalAddress().toString());
+            final ReadMediaThread incomingMessageReader = new ReadMediaThread(this.socket,
+                    "M_Client");
 
-            readMediaThread.start();
-            this.writeToClient();
+            incomingMessageReader.start();
+            this.sendMessages();
 
-            this.closeConnection(readMediaThread);
+            this.closeConnection(incomingMessageReader);
         } catch (final IOException e) {
             e.printStackTrace();
         }
     }
 
-    private void writeToClient() {
+    private void sendMessages() {
         final Encryption encryption = new Encryption();
         final PrintWriter writer = new PrintWriter(this.outputStream, true);
         final Scanner scanner = new Scanner(System.in);
@@ -71,26 +69,18 @@ public class MediaServer {
     }
 
     private void handleImageUpload(final PrintWriter writer, final String outGoingLine) {
+        MImageHandler imageHandler = new MImageHandler(outputStream);
         try {
             writer.println(new Encryption().encrypt("/image incoming!"));
-            this.sendImageFileAsByteStream(outGoingLine);
-            System.out.println("[Mercurys:] Image sent!");
+            imageHandler.sendImageFileAsByteStream(outGoingLine);
+            System.out.println("[M_Console:] Image sent!");
         } catch (final IOException e) {
             System.out.println("Exception Occurred!");
             e.printStackTrace();
         }
     }
 
-    private void sendImageFileAsByteStream(final String imageFileName) throws IOException {
-        final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        final BufferedImage bufferedImage = ImageIO.read(new File(imageFileName));
-        ImageIO.write(bufferedImage, "png", byteArrayOutputStream);
 
-        final byte[] size = ByteBuffer.allocate(4).putInt(byteArrayOutputStream.size()).array();
-
-        this.outputStream.write(size);
-        this.outputStream.write(byteArrayOutputStream.toByteArray());
-    }
 
     private void closeConnection(final ReadMediaThread readMediaThread) throws IOException {
         readMediaThread.exitThread();

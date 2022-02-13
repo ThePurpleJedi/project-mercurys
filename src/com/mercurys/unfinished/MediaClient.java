@@ -37,24 +37,23 @@ public class MediaClient {
         final Scanner sc = new Scanner(System.in);
         System.out.println("Enter server host address [IP] or press 1 for localhost:");
         final String hostAddress = sc.next();
-        return (hostAddress.equals("1"))? "localhost" : hostAddress;
+        return (hostAddress.equals("1"))? "192.168.0.151" : hostAddress;
     }
 
     private void talk() {
         try {
-            final ReadMediaThread readMediaThread = new ReadMediaThread(this.socket,
-                    "client1" + this.socket.getLocalAddress().toString());
+            final ReadMediaThread incomingMessageReader = new ReadMediaThread(this.socket,
+                    "M_Host" + this.socket.getLocalAddress().toString());
+            incomingMessageReader.start();
+            this.sendMessagesToServer();
 
-            readMediaThread.start();
-            this.writeToClient();
-
-            this.closeConnection(readMediaThread);
+            this.closeConnection(incomingMessageReader);
         } catch (final IOException e) {
             e.printStackTrace();
         }
     }
 
-    private void writeToClient() {
+    private void sendMessagesToServer() {
         final Encryption encryption = new Encryption();
         final PrintWriter writer = new PrintWriter(this.outputStream, true);
         final Scanner scanner = new Scanner(System.in);
