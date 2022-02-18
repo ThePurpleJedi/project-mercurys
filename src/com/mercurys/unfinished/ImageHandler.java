@@ -8,18 +8,21 @@ import java.nio.file.*;
 import java.text.*;
 import java.util.Calendar;
 
-public class MImageHandler {
+public class ImageHandler {
 
     DataOutputStream outputStream;
     DataInputStream inputStream;
     String imageDownloadPath;
 
-    public MImageHandler(DataOutputStream outputStream) {
+    public ImageHandler(DataOutputStream outputStream) {
         this.outputStream = outputStream;
     }
 
-    public MImageHandler(DataInputStream inputStream) {
+    public ImageHandler(DataInputStream inputStream) {
         this.inputStream = inputStream;
+    }
+
+    public ImageHandler() {
     }
 
     public void sendImageFileAsByteStream(final String imageFileName) throws IOException {

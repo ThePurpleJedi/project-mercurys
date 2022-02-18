@@ -1,7 +1,7 @@
 package com.mercurys.threads;
 
-import com.mercurys.encryption.Decryption;
-import com.mercurys.unfinished.MImageHandler;
+import com.mercurys.encryption.*;
+import com.mercurys.unfinished.ImageHandler;
 
 import java.awt.image.BufferedImage;
 import java.io.*;
@@ -29,42 +29,52 @@ public class ReadMediaThread extends Thread {
     public void run() {
         try {
             if (this.exit) {
-                this.interrupt();
+                exitThread();
             }
             this.readAndPrintMessages(reader);
-            this.exitThread();
-
         } catch (final SocketException s) {
             System.out.println("Socket is closed");
             System.exit(0);
         } catch (final IOException e) {
-            System.out.println("Interrupted sleep");
+            System.out.println("Exception Occurred!");
+            e.printStackTrace();
+        } finally {
+            this.exitThread();
         }
     }
 
     private void readAndPrintMessages(final BufferedReader reader) throws IOException {
-        String inBoundLine = "";
-        while (!inBoundLine.equals("-x-")) {
-            inBoundLine = reader.readLine();
-            if (inBoundLine == null) {
-                break;
-            } else if (decryption.decrypt(inBoundLine).startsWith("/image")) {
+        String inBoundLine;
+        while (!(inBoundLine = reader.readLine()).equals("-x-")) {
+            if (isImage(inBoundLine)) {
                 downloadIncomingImage();
-            } else if (decryption.getKeyFromMessage(inBoundLine.split(" +")).length() == 88) {
+            } else if (isValidTextMessage(inBoundLine)) {
                 System.out.println(this.sentBy + ": " + this.decryption.decrypt(inBoundLine));
             }
         }
     }
 
+    private boolean isImage(String inBoundLine) {
+        return decryption.decrypt(inBoundLine).startsWith("/image");
+    }
+
+    private boolean isValidTextMessage(String inBoundLine) {
+        return new Key(88).getKeyFromMessage(inBoundLine.split(" +")).length() == 88;
+    }
+
     private void downloadIncomingImage() {
-        MImageHandler imageHandler = new MImageHandler(inputStream);
-        System.out.println("[M. Console]: Attention! " +
-                "The user at the other end is attempting to send you an image file.");
-        System.out.println("[M. Console]: Reading image file...");
+        ImageHandler imageHandler = new ImageHandler(inputStream);
+        notifyUserOfImageReading();
         final BufferedImage image = imageHandler.getImageAsBufferedImage();
         imageHandler.downloadBufferedImage(image);
         System.out.println("[M. Console]: The image file has been downloaded as "
                 + imageHandler.getImageDownloadPath());
+    }
+
+    private void notifyUserOfImageReading() {
+        System.out.println("[M. Console]: Attention! " +
+                "The user at the other end is attempting to send you an image file.");
+        System.out.println("[M. Console]: Reading image file...");
     }
 
     public void exitThread() {

@@ -8,6 +8,7 @@ import java.net.*;
 public class ReadThread extends Thread {
 
     private final String sentBy;
+    private final Decryption decryption = new Decryption();
     private DataInputStream clientStream;
     private boolean exit;
 
@@ -21,28 +22,23 @@ public class ReadThread extends Thread {
 
     @Override
     public void run() {
-        final Decryption decryption = new Decryption();
         try {
-            if (this.exit) {
-                this.interrupt();
-            }
-
-            final BufferedReader reader = new BufferedReader(new InputStreamReader(this.clientStream));
-            String inBoundLine = "";
-
-            while (!inBoundLine.equals("-x-")) {
-                inBoundLine = reader.readLine();
-                if (inBoundLine == null) {
-                    break;
-                }
-                System.out.println(this.sentBy + ": " + decryption.decrypt(inBoundLine));
-            }
+            if (this.exit)
+                exitThread();
+            decryptAndPrintIncomingMessages();
             this.exitThread();
-
         } catch (final SocketException s) {
             System.exit(0);
         } catch (final IOException e) {
             System.out.println("Interrupted sleep");
+        }
+    }
+
+    private void decryptAndPrintIncomingMessages() throws IOException {
+        final BufferedReader reader = new BufferedReader(new InputStreamReader(this.clientStream));
+        String inBoundLine;
+        while ((inBoundLine = reader.readLine()) != null && !inBoundLine.equals("-x-")) {
+            System.out.println(this.sentBy + ": " + decryption.decrypt(inBoundLine));
         }
     }
 

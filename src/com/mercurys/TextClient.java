@@ -11,18 +11,28 @@ public class TextClient {
 
     private Socket socket;
     private DataOutputStream outputStream;
+    private PrintWriter writer;
+    private Scanner scanner;
 
-    private TextClient(final String address, final int port) {
+    private TextClient(final String serverAddress, final int serverPort) {
         try {
-            this.socket = new Socket(address, port);
-            System.out.println("Connected to server!" + this.socket.getRemoteSocketAddress());
-
-            this.outputStream = new DataOutputStream(this.socket.getOutputStream());
-
+            connectToServer(serverAddress, serverPort);
+            initialiseIO();
         } catch (final IOException u) {
             System.out.println("Woops!");
             u.printStackTrace();
         }
+    }
+
+    private void initialiseIO() throws IOException {
+        this.outputStream = new DataOutputStream(this.socket.getOutputStream());
+        this.writer = new PrintWriter(this.outputStream, true);
+        scanner = new Scanner(System.in);
+    }
+
+    private void connectToServer(String address, int port) throws IOException {
+        this.socket = new Socket(address, port);
+        System.out.println("Connected to server!" + this.socket.getRemoteSocketAddress());
     }
 
     public static void main(final String[] args) {
@@ -40,29 +50,32 @@ public class TextClient {
 
     private void talk() {
         try {
-            final ReadThread readThread = new ReadThread(this.socket,
-                    "[MHost" + this.socket.getLocalAddress().toString() + "]");
-
-            readThread.start();
+            final ReadThread readThread = initialiseAndGetReadThread();
             this.writeToServer();
-
             this.closeConnection(readThread);
         } catch (final IOException e) {
             e.printStackTrace();
         }
     }
 
+    private ReadThread initialiseAndGetReadThread() throws IOException {
+        final ReadThread readThread = new ReadThread(this.socket,
+                "[MHost" + this.socket.getLocalAddress().toString() + "]");
+        readThread.start();
+        return readThread;
+    }
+
     private void writeToServer() {
         final Encryption encryption = new Encryption();
-        final PrintWriter writer = new PrintWriter(this.outputStream, true);
-        final Scanner scanner = new Scanner(System.in);
-        String outGoingLine = "";
+        encryptAndPrintMessagesToServer(encryption);
+        writer.println(encryption.encrypt("Connection closed by client."));
+    }
 
-        while (!outGoingLine.equals("-x-")) {
-            outGoingLine = scanner.nextLine();
+    private void encryptAndPrintMessagesToServer(Encryption encryption) {
+        String outGoingLine;
+        while (!(outGoingLine = scanner.nextLine()).equals("-x-")) {
             writer.println(encryption.encrypt(outGoingLine));
         }
-        writer.println(encryption.encrypt("Connection closed by client."));
     }
 
     private void closeConnection(final ReadThread readThread) throws IOException {
