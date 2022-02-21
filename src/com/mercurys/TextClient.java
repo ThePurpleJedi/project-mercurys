@@ -1,7 +1,7 @@
 package com.mercurys;
 
 import com.mercurys.encryption.Encryption;
-import com.mercurys.threads.ReadThread;
+import com.mercurys.readers.TextReaderThread;
 
 import java.io.*;
 import java.net.Socket;
@@ -50,7 +50,7 @@ public class TextClient {
 
     private void talk() {
         try {
-            final ReadThread readThread = initialiseAndGetReadThread();
+            final TextReaderThread readThread = initialiseAndGetReadThread();
             this.writeToServer();
             this.closeConnection(readThread);
         } catch (final IOException e) {
@@ -58,8 +58,8 @@ public class TextClient {
         }
     }
 
-    private ReadThread initialiseAndGetReadThread() throws IOException {
-        final ReadThread readThread = new ReadThread(this.socket,
+    private TextReaderThread initialiseAndGetReadThread() throws IOException {
+        final TextReaderThread readThread = new TextReaderThread(this.socket,
                 "[MHost" + this.socket.getLocalAddress().toString() + "]");
         readThread.start();
         return readThread;
@@ -78,7 +78,7 @@ public class TextClient {
         }
     }
 
-    private void closeConnection(final ReadThread readThread) throws IOException {
+    private void closeConnection(final TextReaderThread readThread) throws IOException {
         readThread.exitThread();
         this.socket.close();
         this.outputStream.close();

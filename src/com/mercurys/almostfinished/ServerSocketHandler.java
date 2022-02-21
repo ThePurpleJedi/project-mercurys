@@ -1,6 +1,6 @@
 package com.mercurys.almostfinished;
 
-import com.mercurys.threads.ReadMediaThread;
+import com.mercurys.readers.MediaReaderThread;
 
 import java.io.*;
 import java.net.*;
@@ -12,7 +12,7 @@ public class ServerSocketHandler {
     private Socket socket;
     private DataOutputStream outputStream;
     private MessageSender messageSender;
-    private ReadMediaThread incomingReaderThread;
+    private MediaReaderThread incomingReaderThread;
 
     public ServerSocketHandler(int serverPort) throws IOException {
         serverSocket = new ServerSocket();
@@ -47,7 +47,7 @@ public class ServerSocketHandler {
     }
 
     private void initialiseReaderThread() throws IOException {
-        incomingReaderThread = new ReadMediaThread(this.socket.getInputStream(),
+        incomingReaderThread = new MediaReaderThread(this.socket.getInputStream(),
                 "M_Client");
         incomingReaderThread.start();
     }

@@ -40,7 +40,7 @@ Once you have finished with your talks and wish to close the connection, both of
 I have many new features and upgrades planned for this project, such as:
 * Enabling WAN connections
 * Upgrading to multi-client chatting, thus making it a sort of chat room
-* Enabling media transfer such as images [you can see the work in progress in the "unfinished" folder]
+* Enabling media transfer such as images [you can see the work in progress in the "almostfinished" folder]
 * Adding a GUI and making this a proper chat application
 
 ### Thank you for visiting!

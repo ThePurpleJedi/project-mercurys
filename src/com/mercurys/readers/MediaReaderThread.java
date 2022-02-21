@@ -1,4 +1,4 @@
-package com.mercurys.threads;
+package com.mercurys.readers;
 
 import com.mercurys.almostfinished.ImageHandler;
 import com.mercurys.encryption.*;
@@ -7,7 +7,7 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.SocketException;
 
-public class ReadMediaThread extends Thread {
+public class MediaReaderThread extends Thread {
 
     private final Decryption decryption = new Decryption();
     private final BufferedReader reader;
@@ -16,7 +16,7 @@ public class ReadMediaThread extends Thread {
     private boolean exit;
 
 
-    public ReadMediaThread(final InputStream inputStream, final String sentBy) {
+    public MediaReaderThread(final InputStream inputStream, final String sentBy) {
         this.inputStream = new DataInputStream(inputStream);
         reader = new BufferedReader(new InputStreamReader(this.inputStream));
         this.sentBy = sentBy;

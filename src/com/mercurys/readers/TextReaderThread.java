@@ -1,18 +1,18 @@
-package com.mercurys.threads;
+package com.mercurys.readers;
 
 import com.mercurys.encryption.Decryption;
 
 import java.io.*;
 import java.net.*;
 
-public class ReadThread extends Thread {
+public class TextReaderThread extends Thread {
 
     private final String sentBy;
     private final Decryption decryption = new Decryption();
     private DataInputStream clientStream;
     private boolean exit;
 
-    public ReadThread(final Socket socket, final String sentBy) throws IOException {
+    public TextReaderThread(final Socket socket, final String sentBy) throws IOException {
         if (!socket.isClosed()) {
             this.clientStream = new DataInputStream(socket.getInputStream());
         }
