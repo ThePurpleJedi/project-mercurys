@@ -1,25 +1,23 @@
 package com.mercurys.threads;
 
+import com.mercurys.almostfinished.ImageHandler;
 import com.mercurys.encryption.*;
-import com.mercurys.unfinished.ImageHandler;
 
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.net.*;
+import java.net.SocketException;
 
 public class ReadMediaThread extends Thread {
 
     private final Decryption decryption = new Decryption();
     private final BufferedReader reader;
     private final String sentBy;
-    private DataInputStream inputStream;
+    private final DataInputStream inputStream;
     private boolean exit;
 
 
-    public ReadMediaThread(final Socket socket, final String sentBy) throws IOException {
-        if (!socket.isClosed()) {
-            this.inputStream = new DataInputStream(socket.getInputStream());
-        }
+    public ReadMediaThread(final InputStream inputStream, final String sentBy) {
+        this.inputStream = new DataInputStream(inputStream);
         reader = new BufferedReader(new InputStreamReader(this.inputStream));
         this.sentBy = sentBy;
         this.exit = false;
@@ -31,7 +29,7 @@ public class ReadMediaThread extends Thread {
             if (this.exit) {
                 exitThread();
             }
-            this.readAndPrintMessages(reader);
+            this.readAndPrintMessages();
         } catch (final SocketException s) {
             System.out.println("Socket is closed");
             System.exit(0);
@@ -43,13 +41,16 @@ public class ReadMediaThread extends Thread {
         }
     }
 
-    private void readAndPrintMessages(final BufferedReader reader) throws IOException {
+    private void readAndPrintMessages() throws IOException {
         String inBoundLine;
-        while (!(inBoundLine = reader.readLine()).equals("-x-")) {
+        while ((inBoundLine = reader.readLine()) != null) {
+            if (inBoundLine.equals("-x-")) return;
             if (isImage(inBoundLine)) {
                 downloadIncomingImage();
-            } else if (isValidTextMessage(inBoundLine)) {
-                System.out.println(this.sentBy + ": " + this.decryption.decrypt(inBoundLine));
+            } else if (isValidEncryptedTextMessage(inBoundLine)) {
+                System.out.println(this.sentBy + ": " + decryption.decrypt(inBoundLine));
+            } else {
+                System.out.println("Invalid Message Format");
             }
         }
     }
@@ -58,7 +59,7 @@ public class ReadMediaThread extends Thread {
         return decryption.decrypt(inBoundLine).startsWith("/image");
     }
 
-    private boolean isValidTextMessage(String inBoundLine) {
+    private boolean isValidEncryptedTextMessage(String inBoundLine) {
         return new Key(88).getKeyFromMessage(inBoundLine.split(" +")).length() == 88;
     }
 

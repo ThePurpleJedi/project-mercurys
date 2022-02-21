@@ -20,6 +20,9 @@ public class Encryption {
     }
 
     public String encrypt(final String message) {
+        if (message == null || message.equals("")) {
+            return "";
+        }
         String[] words = initialiseVariables(message);
         words = runEncryptionAlgorithm(words);
         return this.getFinalEncryptedMessage(words);
@@ -109,17 +112,22 @@ public class Encryption {
     private String getMessageWithInterspersedKeyFragments(String[] words) {
         StringBuilder encryptedMessage = new StringBuilder();
         int fragmentNumber = 1;
-
         for (int i = 0; i < numberOfWords; i++) {
             encryptedMessage.append(words[i]).append(" ");
-            if (numberOfWords > encryptionKey.getNumberOfFragments()) {
-                if (isFragmentInsertableHere(fragmentNumber, i)) {
-                    encryptedMessage.append(this.getKeyFragment(fragmentNumber));
-                    fragmentNumber++;
-                }
-            } else {
-                encryptedMessage.append(getMiddleFragments(i));
+            encryptedMessage.append(insertFragmentIfInsertable(fragmentNumber, i));
+            fragmentNumber += (isFragmentInsertableHere(fragmentNumber, i))? 1 : 0;
+        }
+        return encryptedMessage.toString();
+    }
+
+    private String insertFragmentIfInsertable(int fragmentNumber, int i) {
+        StringBuilder encryptedMessage = new StringBuilder();
+        if (numberOfWords > encryptionKey.getNumberOfFragments()) {
+            if (isFragmentInsertableHere(fragmentNumber, i)) {
+                encryptedMessage.append(this.getKeyFragment(fragmentNumber));
             }
+        } else {
+            encryptedMessage.append(getMiddleFragments(i));
         }
         return encryptedMessage.toString();
     }

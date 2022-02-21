@@ -14,7 +14,7 @@ public class Decryption {
 
     public String decrypt(final String message) {
         if (message == null) {
-            return null;
+            return "";
         }
         String[] messageAsWords = message.split(" +");
         messageAsWords = preProcessTheMessage(messageAsWords);
