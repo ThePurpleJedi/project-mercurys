@@ -14,5 +14,3 @@ $src/com/mercurys/encryption/Key.java,2/1/21dd4242503d81d0bdc133ffee4a870bffd14
 +src/com/mercurys/encryption/Encryption.java,9/6/96a1e0b4ba9cb3e7c1682f3a3f3038c902a29072
 ^
 .src/com/mercurys/readers/TextReaderThread.java,7/5/751ea9d57a60ac3487c713ca6a7d89436ad389dd
-9
-	README.md,8/e/8ec9a00bfd09b3190ac6b22251dbb1aa95a0579d

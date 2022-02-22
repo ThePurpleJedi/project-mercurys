@@ -14,15 +14,14 @@ public class ServerSocketHandler {
     private MediaReaderThread incomingReaderThread;
     private MessageHandler messageHandler;
 
-    public ServerSocketHandler(int serverPort) throws IOException {
+    public ServerSocketHandler(String hostIPAddress, int serverPort) throws IOException {
         serverSocket = new ServerSocket();
-        initialiseServerSocket(serverPort);
+        initialiseServerSocket(hostIPAddress, serverPort);
         acceptClientRequest();
         initialiseIO();
     }
 
-    private void initialiseServerSocket(int serverPort) throws IOException {
-        String hostAddress = "192.168.0.151"; //replace with one's own LAN IP address
+    private void initialiseServerSocket(String hostAddress, int serverPort) throws IOException {
         serverSocket.bind(new InetSocketAddress(hostAddress, serverPort));
         System.out.println("""
                 Server initiated.

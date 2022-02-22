@@ -3,6 +3,7 @@ package com.mercurys;
 import com.mercurys.handlers.ServerSocketHandler;
 
 import java.io.IOException;
+import java.util.Scanner;
 
 public class MercurysServer {
 
@@ -10,7 +11,7 @@ public class MercurysServer {
 
     private MercurysServer(final int port) {
         try {
-            serverSocketHandler = new ServerSocketHandler(port);
+            serverSocketHandler = new ServerSocketHandler(getIPAddress(), port);
         } catch (final IOException e) {
             System.out.println("Exception occurred!");
             e.printStackTrace();
@@ -21,6 +22,11 @@ public class MercurysServer {
         final MercurysServer server = new MercurysServer(4444);
         server.startTalking();
         System.out.println("Thank you for using Project Mercurys!");
+    }
+
+    private String getIPAddress() {
+        System.out.println("Enter your device's LAN IP address: ");
+        return new Scanner(System.in).nextLine();
     }
 
     private void startTalking() {
