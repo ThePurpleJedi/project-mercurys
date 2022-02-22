@@ -3,35 +3,63 @@
 ### _Welcome to Mercurys!_
 
 Mercurys is a fun little side-project I'm working on in between my studies. 
-It's basically a console-based chat application that uses a simple Socket connection to transmit and receive data.
-This is my first real programming project, and I have a lot of hopes for this!
+It's basically a console-based chat application that uses a simple Socket connection to transmit and receive data. This
+is my first real programming project, and I have a lot of hopes for this!
 
 #### Features:
 
 * Uses a custom encryption-decryption algorithm [developed by myself]
-* Uses multi-threading to simultaneously read and write messages to and from the server/client
+* Uses multi-threading to simultaneously read and write messages
+* Users can send and receive image files
 * Works on a LAN connection [as of yet]
 
-### How does one use Mercurys?
+### How Do You Use Mercurys?
 
-Well it's as simple as can be, really. All one needs to do is follow these steps:
+Well it's as simple as can be, really. Here is what you do:
+
+#### _To start the connection:_
+
+The first step is to download the project and open it in your IDE of choice. Then the steps differ slightly based on
+whether you are the one who wishes to host the server [the host] or the one who wishes to request a connection to an
+already hosted server [the client].
 
 _If you are the host:_
-1. Download the project and open it in your IDE of choice
-2. In the TextServer.java file, set the "hostAddress" variable to your own LAN IP address.
-   [That should look something like "192.168._.\___"]
-3. Compile and run TextServer.java [src/com/mercurys/TextServer.java]
-4. Now the server has been initialised and will wait for a client socket to connect
-5. Once a client socket has connected to the IP [set by you in step 2], the program will show a confirmatory message
-6. Now you can send and receive messages from the user at the other end of the connection!
+
+1. Compile and run the MercurysServer.java file `[project-mercurys/src/com/mercurys/MercurysServer.java]`
+2. Enter your computer's LAN IP address when prompted [it should look something like 192.168._.\___]
+3. The server has now been initialised, and it will wait for a client to request a connection.
+4. Once a client socket has connected to the IP [entered by you in step 3], the program will notify you
 
 _If you are the client:_
 
-1. Download the project and open it in your IDE of choice
-2. Compile and run the TextClient.java file [src/com/mercurys/TextClient.java]
-3. Enter the IP address of the host when prompted
-4. Once the connection is successful, the program will show a confirmatory message
-5. Now you can send and receive messages from the user at the other end of the connection!
+1. Compile and run the MercurysClient.java file `[project-mercurys/src/com/mercurys/MercurysClient.java]`
+2. Enter the IP address of the host you wish to connect to when prompted
+3. Once the connection is successful, the program will notify you
+
+Now the 2 computers have been connected, and you can easily send and receive text messages and images while the
+connection is active.
+
+***To send a message***
+
+To send a text message, you just need to type the message and press enter.
+
+To send an image, the process is slightly different. First, make sure you have the image downloaded on your computer.
+Then, go to the image and copy its
+"absolute path".
+
+An absolute file path is the complete and unique "name" of a file. More technically, it is the string of characters used
+to uniquely identify a file in a device's directory structure. For example:
+
+* On Windows - `C:\Pictures\Nature\SummerLeaves.jpg`
+* On Linux - `/home/xyz/Pictures/Cats.jpg`
+* On macOS - `/Users/xyz/Pictures/Pluto.png`
+
+After copying the absolute path [including the name of the image itself], go to the console and use the following format
+to send the image:
+
+`/image [absolute file path]`
+
+The console will display a confirmatory message that the image has been sent if all goes well.
 
 Once you have finished with your talks and wish to close the connection, both of the users have to enter "-x-"
 [without the double quotes] to close the connection and stop the program.
@@ -45,13 +73,12 @@ Well, apart from serving as a productive way of ~~procrastinating~~ taking a bre
 Java during my otherwise non-programming related studies. Plus, I'm using this as a way to explore OOP concepts such as
 encapsulation and inheritance by myself, and learning to effectively implement them in real world scenarios.
 
-#### Future Plans:
+#### Plans For The Future:
 
 I have many new features and upgrades planned for this project, such as:
 
 * Enabling WAN connections
 * Upgrading to multi-client chatting, thus making it a sort of chat room
-* Enabling media transfer such as images [you can see the work in progress in the "almostfinished" folder]
 * Adding a GUI and making this a proper chat application
 
 ## Thank you for visiting!
