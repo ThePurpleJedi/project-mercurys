@@ -1,4 +1,4 @@
-package com.mercurys.almostfinished;
+package com.mercurys.handlers;
 
 import com.mercurys.readers.MediaReaderThread;
 
@@ -11,8 +11,8 @@ public class ServerSocketHandler {
     private final ServerSocket serverSocket;
     private Socket socket;
     private DataOutputStream outputStream;
-    private MessageSender messageSender;
     private MediaReaderThread incomingReaderThread;
+    private MessageHandler messageHandler;
 
     public ServerSocketHandler(int serverPort) throws IOException {
         serverSocket = new ServerSocket();
@@ -37,12 +37,12 @@ public class ServerSocketHandler {
     private void initialiseIO() throws IOException {
         this.outputStream = new DataOutputStream(this.socket.getOutputStream());
         PrintWriter writer = new PrintWriter(this.outputStream, true);
-        messageSender = new MessageSender(new Scanner(System.in), writer, outputStream);
+        messageHandler = new MessageHandler(new Scanner(System.in), writer, outputStream);
     }
 
     public void talkToClient() throws IOException {
         initialiseReaderThread();
-        messageSender.sendMessagesToOtherUser();
+        messageHandler.sendMessagesToOtherUser();
         closeConnection();
     }
 

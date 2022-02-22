@@ -1,4 +1,4 @@
-package com.mercurys;
+package com.mercurys.textmessaging;
 
 import com.mercurys.encryption.Encryption;
 import com.mercurys.readers.TextReaderThread;

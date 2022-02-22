@@ -1,17 +1,17 @@
-package com.mercurys.almostfinished;
+package com.mercurys.handlers;
 
 import com.mercurys.encryption.Encryption;
 
 import java.io.*;
 import java.util.Scanner;
 
-public class MessageSender {
+public class MessageHandler {
     private final Scanner scanner;
     private final Encryption encryption = new Encryption();
     private final PrintWriter writer;
     private final DataOutputStream outputStream;
 
-    public MessageSender(Scanner scanner, PrintWriter writer, DataOutputStream outputStream) {
+    public MessageHandler(Scanner scanner, PrintWriter writer, DataOutputStream outputStream) {
         this.scanner = scanner;
         this.writer = writer;
         this.outputStream = outputStream;

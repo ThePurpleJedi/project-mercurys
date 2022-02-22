@@ -1,13 +1,15 @@
-package com.mercurys.almostfinished;
+package com.mercurys;
+
+import com.mercurys.handlers.ClientSocketHandler;
 
 import java.io.IOException;
 import java.util.Scanner;
 
-public class MediaClient {
+public class MercurysClient {
 
     ClientSocketHandler clientSocketHandler;
 
-    private MediaClient(final String address, final int port) {
+    private MercurysClient(final String address, final int port) {
         try {
             clientSocketHandler = new ClientSocketHandler(address, port);
         } catch (final IOException u) {
@@ -16,7 +18,7 @@ public class MediaClient {
     }
 
     public static void main(final String[] args) {
-        final MediaClient client = new MediaClient(getHostAddress(), 4444);
+        final MercurysClient client = new MercurysClient(getHostAddress(), 4444);
         client.startTalking();
         System.out.println("Thank you for using Project Mercurys!");
     }
@@ -35,6 +37,4 @@ public class MediaClient {
             e.printStackTrace();
         }
     }
-
-
 }

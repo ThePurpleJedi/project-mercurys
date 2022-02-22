@@ -1,7 +1,7 @@
 package com.mercurys.readers;
 
-import com.mercurys.almostfinished.ImageHandler;
 import com.mercurys.encryption.*;
+import com.mercurys.handlers.ImageHandler;
 
 import java.awt.image.BufferedImage;
 import java.io.*;
