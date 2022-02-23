@@ -33,7 +33,7 @@ public class MessageHandler {
         }
     }
 
-    public void handleImageUpload(final String imageFileName) throws IOException {
+    private void handleImageUpload(final String imageFileName) throws IOException {
         ImageHandler imageHandler = new ImageHandler(outputStream);
         writer.println(new Encryption().encrypt("/image incoming!"));
         imageHandler.sendImageFileAsByteStream(imageFileName);

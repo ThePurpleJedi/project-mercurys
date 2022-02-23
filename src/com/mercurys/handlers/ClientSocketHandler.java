@@ -4,6 +4,7 @@ import com.mercurys.readers.MediaReaderThread;
 
 import java.io.*;
 import java.net.Socket;
+import java.text.MessageFormat;
 import java.util.Scanner;
 
 public class ClientSocketHandler {
@@ -20,7 +21,7 @@ public class ClientSocketHandler {
 
     private void connectToServer(String address, int port) throws IOException {
         this.socket = new Socket(address, port);
-        System.out.println("Connected to server! [" + this.socket.getRemoteSocketAddress() + "]");
+        System.out.println(MessageFormat.format("Connected to server [{0}] !", address));
     }
 
     private void initialiseIO() throws IOException {
@@ -37,7 +38,7 @@ public class ClientSocketHandler {
 
     private void initialiseReaderThread() throws IOException {
         incomingReaderThread = new MediaReaderThread(this.socket.getInputStream(),
-                "M_Host");
+                "[User00]");
         incomingReaderThread.start();
     }
 

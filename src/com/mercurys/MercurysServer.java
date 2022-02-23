@@ -9,9 +9,9 @@ public class MercurysServer {
 
     private ServerSocketHandler serverSocketHandler;
 
-    private MercurysServer(final int port) {
+    private MercurysServer(String hostAddress, int port) {
         try {
-            serverSocketHandler = new ServerSocketHandler(getIPAddress(), port);
+            serverSocketHandler = new ServerSocketHandler(hostAddress, port);
         } catch (final IOException e) {
             System.out.println("Exception occurred!");
             e.printStackTrace();
@@ -19,12 +19,12 @@ public class MercurysServer {
     }
 
     public static void main(final String[] args) {
-        final MercurysServer server = new MercurysServer(4444);
+        final MercurysServer server = new MercurysServer(getIPAddress(), 4444);
         server.startTalking();
         System.out.println("Thank you for using Project Mercurys!");
     }
 
-    private String getIPAddress() {
+    private static String getIPAddress() {
         System.out.println("Enter your device's LAN IP address: ");
         return new Scanner(System.in).nextLine();
     }

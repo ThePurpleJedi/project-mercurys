@@ -24,7 +24,7 @@ public class ServerSocketHandler {
     private void initialiseServerSocket(String hostAddress, int serverPort) throws IOException {
         serverSocket.bind(new InetSocketAddress(hostAddress, serverPort));
         System.out.println("""
-                Server initiated.
+                Server initialised.
                 Waiting for client...""");
     }
 
@@ -47,7 +47,7 @@ public class ServerSocketHandler {
 
     private void initialiseReaderThread() throws IOException {
         incomingReaderThread = new MediaReaderThread(this.socket.getInputStream(),
-                "M_Client");
+                "[User01]");
         incomingReaderThread.start();
     }
 

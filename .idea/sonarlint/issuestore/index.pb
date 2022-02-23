@@ -14,3 +14,11 @@ $src/com/mercurys/encryption/Key.java,2/1/21dd4242503d81d0bdc133ffee4a870bffd14
 +src/com/mercurys/encryption/Encryption.java,9/6/96a1e0b4ba9cb3e7c1682f3a3f3038c902a29072
 ^
 .src/com/mercurys/readers/TextReaderThread.java,7/5/751ea9d57a60ac3487c713ca6a7d89436ad389dd
+[
++src/com/mercurys/handlers/ImageHandler.java,f/8/f849da903fe1ebe61dec895b9f80c051c240d372
+_
+/src/com/mercurys/readers/MediaReaderThread.java,a/4/a4da2766030a3676bcd70916e41be1c4a75cf84a
+^
+.src/com/mercurys/textmessaging/TextClient.java,f/5/f5a7932de3e52c2ab6f9c834dd4304ba7865c4ee
+^
+.src/com/mercurys/textmessaging/TextServer.java,f/3/f32af2342c1688883cf4c3814cde7b952a89aad7
