@@ -22,7 +22,7 @@ public class ImageHandler {
         this.inputStream = inputStream;
     }
 
-    public void sendImageFileAsByteStream(final String imageFileName) throws IOException {
+    public void sendImageFile(final String imageFileName) throws IOException {
         final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         final BufferedImage bufferedImage = ImageIO.read(new File(imageFileName));
 
@@ -46,10 +46,14 @@ public class ImageHandler {
     }
 
     private byte[] getImageAsBytes() throws IOException {
-        return readImageSize(ByteBuffer.wrap(readImageSize(4)).asIntBuffer().get());
+        return readByteArrayFromInputStream(getImageSize());
     }
 
-    private byte[] readImageSize(int x) throws IOException {
+    private int getImageSize() throws IOException {
+        return ByteBuffer.wrap(readByteArrayFromInputStream(4)).asIntBuffer().get();
+    }
+
+    private byte[] readByteArrayFromInputStream(int x) throws IOException {
         final byte[] imgSize = new byte[x];
         this.inputStream.readFully(imgSize);
         return imgSize;

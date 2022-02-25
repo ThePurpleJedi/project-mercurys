@@ -2,12 +2,15 @@ package com.mercurys.encryption;
 
 public class Key {
     private static final int FRAGMENT_LENGTH = 8;
-    private final int numberOfFragments;
+    private int numberOfFragments;
     private char[] keyValue;
 
     public Key(int keyLength) {
         keyValue = new char[keyLength];
         numberOfFragments = keyLength / FRAGMENT_LENGTH;
+    }
+
+    public Key() {
     }
 
     public void setKey(char[] key) {
