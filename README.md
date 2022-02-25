@@ -10,7 +10,7 @@ is my first real programming project, and I have a lot of hopes for this!
 
 * Uses a custom encryption-decryption algorithm [developed by myself]
 * Uses multi-threading to simultaneously read and write messages
-* Users can send and receive image files
+* Users can send and receive files
 * Works on a LAN connection [as of yet]
 
 ### How Do You Use Mercurys?
@@ -41,28 +41,35 @@ connection is active.
 
 ***To send a message***
 
-To send a text message, you just need to type the message and press enter.
+Simply type the message and press enter.
 
-To send an image, the process is slightly different. First, make sure you have the image downloaded on your computer.
-Then, go to the image and copy its
-"absolute path".
+***To send a file***
+
+To send any media file, make sure you have the file downloaded on your computer. Then, go to the image and copy its "
+absolute path".
 
 An absolute file path is the complete and unique "name" of a file. More technically, it is the string of characters used
 to uniquely identify a file in a device's directory structure. For example:
 
 * On Windows - `C:\Pictures\Nature\SummerLeaves.jpg`
-* On Linux - `/home/xyz/Pictures/Cats.jpg`
-* On macOS - `/Users/xyz/Pictures/Pluto.png`
+* On Linux - `/home/xyz/Documents/Sustainability_Report.pdf`
+* On macOS - `/Users/xyz/Documents/ProjectDeadlineNotice.pdf`
 
-After copying the absolute path [including the name of the image itself], go to the console and use the following format
-to send the image:
+After copying the absolute path, go to the console and use the following format to send the file:
 
-`/image [absolute file path]`
+`/<file type> <absolute path>`
 
-The console will display a confirmatory message that the image has been sent if all goes well.
+Currently, the accepted file types are:
 
-Once you have finished with your talks and wish to close the connection, both of the users have to enter "-x-"
-[without the double quotes] to close the connection and stop the program.
+* `image` -> for image files
+* `pdf` -> for pdf files
+
+The console will display a confirmatory message that the file has been sent if all goes well.
+
+The console will also display the path of the file downloaded.
+
+Once you have finished with your talks and wish to close the connection, both the users must
+enter `-x-`[without the double quotes] to stop the program.
 
 #### Why Am I Doing This?
 

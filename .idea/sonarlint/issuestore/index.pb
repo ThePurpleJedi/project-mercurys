@@ -14,8 +14,6 @@ D
 .src/com/mercurys/textmessaging/TextClient.java,f/5/f5a7932de3e52c2ab6f9c834dd4304ba7865c4ee
 ^
 .src/com/mercurys/textmessaging/TextServer.java,f/3/f32af2342c1688883cf4c3814cde7b952a89aad7
-9
-	README.md,8/e/8ec9a00bfd09b3190ac6b22251dbb1aa95a0579d
 b
 2src/com/mercurys/handlers/ClientSocketHandler.java,a/9/a98985e915caa5e3e7e0fc8d532eeedbc9132970
 b
