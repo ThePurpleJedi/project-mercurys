@@ -1,4 +1,4 @@
-package com.mercurys.handlers;
+package com.mercurys.handlersandwrappers;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;

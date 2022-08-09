@@ -1,7 +1,7 @@
 package com.mercurys.readers;
 
 import com.mercurys.encryption.*;
-import com.mercurys.handlers.*;
+import com.mercurys.handlersandwrappers.*;
 
 import java.awt.image.BufferedImage;
 import java.io.*;
@@ -11,15 +11,13 @@ public class MediaReaderThread extends Thread {
 
     private final Decryption decryption = new Decryption();
     private final BufferedReader reader;
-    private final String sentBy;
     private final DataInputStream inputStream;
     private boolean exit;
 
 
-    public MediaReaderThread(final InputStream inputStream, final String sentBy) {
+    public MediaReaderThread(final InputStream inputStream) {
         this.inputStream = new DataInputStream(inputStream);
         reader = new BufferedReader(new InputStreamReader(this.inputStream));
-        this.sentBy = sentBy;
         this.exit = false;
     }
 
@@ -31,7 +29,7 @@ public class MediaReaderThread extends Thread {
             }
             this.readAndPrintMessages();
         } catch (final SocketException s) {
-            System.out.println("Socket is closed");
+            System.out.println("Connection closed");
             System.exit(0);
         } catch (final IOException e) {
             System.out.println("Exception Occurred!");
@@ -58,11 +56,11 @@ public class MediaReaderThread extends Thread {
     }
 
     private void printMessage(String inBoundLine) {
-        System.out.println(this.sentBy + ": " + decryption.decrypt(inBoundLine));
+        System.out.println(decryption.decrypt(inBoundLine));
     }
 
     private boolean isValidEncryptedTextMessage(String inBoundLine) {
-        return new Key(88).getKeyFromMessage(inBoundLine.split(" +")).length() == 88;
+        return new KeyWrapper(88).getKeyFromMessage(inBoundLine.split(" +")).length() == 88;
     }
 
     private void handleFileTransferCommand(String inBoundLine) {

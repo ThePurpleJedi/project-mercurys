@@ -1,6 +1,6 @@
 package com.mercurys;
 
-import com.mercurys.handlers.ClientSocketHandler;
+import com.mercurys.handlersandwrappers.*;
 
 import java.io.IOException;
 import java.util.Scanner;
@@ -8,26 +8,40 @@ import java.util.Scanner;
 public class MercurysClient {
 
     ClientSocketHandler clientSocketHandler;
+    Scanner sc = new Scanner(System.in);
 
-    private MercurysClient(final String address, final int port) {
+    private MercurysClient(final int port) {
         try {
-            clientSocketHandler = new ClientSocketHandler(address, port);
+            DeviceWrapper deviceWrapper = createServerWrapper(port);
+            clientSocketHandler = new ClientSocketHandler(deviceWrapper);
         } catch (final IOException u) {
             u.printStackTrace();
         }
     }
 
-    public static void main(final String[] args) {
-        final MercurysClient client = new MercurysClient(getHostAddress(), 4444);
-        client.startTalking();
-        System.out.println("Thank you for using Project Mercurys!");
+    private DeviceWrapper createServerWrapper(int port) {
+        DeviceWrapper deviceWrapper = new DeviceWrapper();
+        deviceWrapper.setDeviceIP(getHostAddress());
+        deviceWrapper.setDevicePort(port);
+        deviceWrapper.setDeviceName(getUsername());
+        return deviceWrapper;
     }
 
-    private static String getHostAddress() {
-        final Scanner sc = new Scanner(System.in);
-        System.out.println("Enter server host address [IP] or press 1 for localhost:");
-        final String hostAddress = sc.next();
+    private String getHostAddress() {
+        System.out.println("Enter server host address [IP]:");
+        final String hostAddress = new Scanner(System.in).next();
         return (hostAddress.equals("1"))? "192.168.0.151" : hostAddress;
+    }
+
+    private String getUsername() {
+        System.out.println("Enter unique username: ");
+        return sc.nextLine();
+    }
+
+    public static void main(final String[] args) {
+        final MercurysClient client = new MercurysClient(4444);
+        client.startTalking();
+        System.out.println("Thank you for using Project Mercurys!");
     }
 
     private void startTalking() {

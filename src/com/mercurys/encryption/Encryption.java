@@ -6,13 +6,8 @@ public class Encryption {
 
     private final String specialChars;
     private String chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
-    private Key encryptionKey;
+    private KeyWrapper encryptionKeyWrapper;
     private int numberOfWords;
-
-    public Encryption(final String specialChars) {
-        this.specialChars = specialChars;
-        this.chars = this.chars + specialChars;
-    }
 
     public Encryption() {
         this.specialChars = "!(),–.:;?’'-*/+=<>{}[]#@^&";
@@ -29,8 +24,8 @@ public class Encryption {
     }
 
     private String[] initialiseVariables(String message) {
-        encryptionKey = new Key(chars.length());
-        encryptionKey.setRandom();
+        encryptionKeyWrapper = new KeyWrapper(chars.length());
+        encryptionKeyWrapper.setRandom();
         String[] words = message.split(" +");
         numberOfWords = words.length;
         return words;
@@ -93,7 +88,7 @@ public class Encryption {
     }
 
     private void translateUsingKey(String[] words) {
-        char[] key = encryptionKey.getKeyAsCharArray();
+        char[] key = encryptionKeyWrapper.getKeyAsCharArray();
         for (int i = 0; i < numberOfWords; i++) {
             final char[] letters = words[i].toCharArray();
             for (int j = 0; j < letters.length; j++) {
@@ -122,7 +117,7 @@ public class Encryption {
 
     private String insertFragmentIfInsertable(int fragmentNumber, int i) {
         StringBuilder encryptedMessage = new StringBuilder();
-        if (numberOfWords > encryptionKey.getNumberOfFragments()) {
+        if (numberOfWords > encryptionKeyWrapper.getNumberOfFragments()) {
             if (isFragmentInsertableHere(fragmentNumber, i)) {
                 encryptedMessage.append(this.getKeyFragment(fragmentNumber));
             }
@@ -133,7 +128,7 @@ public class Encryption {
     }
 
     private boolean isFragmentInsertableHere(int fragmentNumber, int i) {
-        int numberOfFragments = encryptionKey.getNumberOfFragments();
+        int numberOfFragments = encryptionKeyWrapper.getNumberOfFragments();
         return (Math.rint(fragmentNumber * ((double) numberOfWords / numberOfFragments)) == i &&
                 fragmentNumber < numberOfFragments - 1);
     }
@@ -164,7 +159,7 @@ public class Encryption {
 
     private String getKeyFragment(final int fragmentNumber) {
         return "~" +
-                encryptionKey.getKeyFragment(fragmentNumber) +
+                encryptionKeyWrapper.getKeyFragment(fragmentNumber) +
                 "~ ";
     }
 }

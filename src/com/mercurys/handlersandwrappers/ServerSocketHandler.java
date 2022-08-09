@@ -1,4 +1,4 @@
-package com.mercurys.handlers;
+package com.mercurys.handlersandwrappers;
 
 import com.mercurys.readers.MediaReaderThread;
 
@@ -9,23 +9,32 @@ import java.util.Scanner;
 public class ServerSocketHandler {
 
     private final ServerSocket serverSocket;
+    private final DeviceWrapper serverDeviceWrapper;
     private Socket socket;
     private DataOutputStream outputStream;
     private MediaReaderThread incomingReaderThread;
     private MessageHandler messageHandler;
 
-    public ServerSocketHandler(String hostIPAddress, int serverPort) throws IOException {
-        serverSocket = new ServerSocket();
-        initialiseServerSocket(hostIPAddress, serverPort);
-        acceptClientRequest();
-        initialiseIO();
+    public ServerSocketHandler(DeviceWrapper serverDeviceWrapper) throws IOException {
+        this.serverSocket = new ServerSocket();
+        this.serverDeviceWrapper = serverDeviceWrapper;
+        bindServerSocket();
     }
 
-    private void initialiseServerSocket(String hostAddress, int serverPort) throws IOException {
-        serverSocket.bind(new InetSocketAddress(hostAddress, serverPort));
-        System.out.println("""
-                Server initialised.
-                Waiting for client...""");
+    private void bindServerSocket() throws IOException {
+        serverSocket.bind(new InetSocketAddress(serverDeviceWrapper.getDeviceIP(),
+                serverDeviceWrapper.getDevicePort()));
+        System.out.println("Server initialised, waiting for client...");
+    }
+
+    public void talk() throws IOException {
+        initialiseSocketParameters();
+        talkToClient();
+    }
+
+    private void initialiseSocketParameters() throws IOException {
+        acceptClientRequest();
+        initialiseIO();
     }
 
     private void acceptClientRequest() throws IOException {
@@ -37,6 +46,7 @@ public class ServerSocketHandler {
         this.outputStream = new DataOutputStream(this.socket.getOutputStream());
         PrintWriter writer = new PrintWriter(this.outputStream, true);
         messageHandler = new MessageHandler(new Scanner(System.in), writer, outputStream);
+        messageHandler.setReceiverName(serverDeviceWrapper.getDeviceName());
     }
 
     public void talkToClient() throws IOException {
@@ -46,8 +56,7 @@ public class ServerSocketHandler {
     }
 
     private void initialiseReaderThread() throws IOException {
-        incomingReaderThread = new MediaReaderThread(this.socket.getInputStream(),
-                "[User01]");
+        incomingReaderThread = new MediaReaderThread(this.socket.getInputStream());
         incomingReaderThread.start();
     }
 

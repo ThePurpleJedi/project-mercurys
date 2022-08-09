@@ -1,8 +1,9 @@
-package com.mercurys.handlers;
+package com.mercurys.handlersandwrappers;
 
 import com.mercurys.encryption.Encryption;
 
 import java.io.*;
+import java.text.MessageFormat;
 import java.util.Scanner;
 
 public class MessageHandler {
@@ -10,6 +11,8 @@ public class MessageHandler {
     private final Encryption encryption = new Encryption();
     private final PrintWriter writer;
     private final DataOutputStream outputStream;
+
+    private String receiverName = "";
 
     public MessageHandler(Scanner scanner, PrintWriter writer, DataOutputStream outputStream) {
         this.scanner = scanner;
@@ -29,9 +32,13 @@ public class MessageHandler {
         switch (outGoingLine.split(" +")[0]) {
             case "/image" -> this.handleImageUpload(outGoingLine.substring(7));
             case "/pdf" -> this.handlePDFUpload(outGoingLine.substring(5));
-
-            default -> writer.println(encryption.encrypt(outGoingLine));
+            default -> writeMessage(outGoingLine);
         }
+    }
+
+    private void writeMessage(String outGoingLine) {
+        writer.println(encryption.encrypt(
+                MessageFormat.format("{0}: {1}", receiverName, outGoingLine)));
     }
 
     private void handlePDFUpload(String pdfFileName) {
@@ -46,5 +53,9 @@ public class MessageHandler {
         writer.println("/image");
         imageHandler.sendImageFile(imageFileName);
         System.out.println("[M. Console]: Image sent!");
+    }
+
+    public void setReceiverName(String name) {
+        this.receiverName = name;
     }
 }

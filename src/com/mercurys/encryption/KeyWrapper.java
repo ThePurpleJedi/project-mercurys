@@ -1,19 +1,16 @@
 package com.mercurys.encryption;
 
-public class Key {
+public class KeyWrapper {
     private static final int FRAGMENT_LENGTH = 8;
-    private int numberOfFragments;
+    private final int numberOfFragments;
     private char[] keyValue;
 
-    public Key(int keyLength) {
+    public KeyWrapper(int keyLength) {
         keyValue = new char[keyLength];
         numberOfFragments = keyLength / FRAGMENT_LENGTH;
     }
 
-    public Key() {
-    }
-
-    public void setKey(char[] key) {
+    public void setKeyIfNotYetAssigned(char[] key) {
         if (this.isAlreadyAssigned()) {
             this.keyValue = key;
         }

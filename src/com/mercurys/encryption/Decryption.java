@@ -5,7 +5,7 @@ import java.util.*;
 public class Decryption {
 
     private String chars;
-    private Key key;
+    private KeyWrapper keyWrapper;
     private int actualMessageLength;
 
     public Decryption() {
@@ -20,7 +20,7 @@ public class Decryption {
         messageAsWords = preProcessTheMessage(messageAsWords);
         messageAsWords = runDecryptionAlgorithm(messageAsWords);
         String finalDecryptedMessage = this.getFinalDecryptedMessage(messageAsWords);
-        key.erase();
+        keyWrapper.erase();
         return finalDecryptedMessage;
     }
 
@@ -38,14 +38,13 @@ public class Decryption {
         }
     }
 
-    private String reTranslateWord(char[] letters) {
-        String keyString = this.key.getKeyAsString();
-        for (int j = 0; j < letters.length; j++) {
-            if (letters[j] != '|') {
-                letters[j] = this.chars.charAt(keyString.indexOf(letters[j]));
-            }
-        }
-        return String.valueOf(letters);
+    private String[] preProcessTheMessage(String[] words) {
+        this.extractSpecialCharacters(words);
+        this.keyWrapper = new KeyWrapper(88);
+        keyWrapper.setKeyIfNotYetAssigned(keyWrapper.getKeyFromMessage(words).toCharArray());
+        this.nullifyEmbeddedKeyFragments(words);
+        words = this.removeAllNullElements(words);
+        return words;
     }
 
     private String[] perfectSquareReSwap(String[] words) {
@@ -93,13 +92,14 @@ public class Decryption {
         return c;
     }
 
-    private String[] preProcessTheMessage(String[] words) {
-        this.extractSpecialCharacters(words);
-        this.key = new Key(88);
-        key.setKey(key.getKeyFromMessage(words).toCharArray());
-        this.nullifyEmbeddedKeyFragments(words);
-        words = this.removeAllNullElements(words);
-        return words;
+    private String reTranslateWord(char[] letters) {
+        String keyString = this.keyWrapper.getKeyAsString();
+        for (int j = 0; j < letters.length; j++) {
+            if (letters[j] != '|') {
+                letters[j] = this.chars.charAt(keyString.indexOf(letters[j]));
+            }
+        }
+        return String.valueOf(letters);
     }
 
     private String[] removeAllNullElements(final String[] words) {
