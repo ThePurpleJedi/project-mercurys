@@ -45,7 +45,7 @@ Simply type the message and press enter.
 To send any media file, ensure that the file is present locally on the device. The, go to the console and use the 
 following format to send the file:
 
-`/<file type> <absolute file path>
+`/<file type> <absolute file path>`
 
 The absolute file path should look like this on different operating systems:
 
