@@ -2,8 +2,8 @@
 
 ### _Welcome to Mercurys!_
 
-Mercurys is a fun little side-project I've been working on in between my studies. 
-It's basically a console-based chat application that uses a simple Socket connection to transmit and receive data.
+Mercurys is a side-project I've been working on in between my studies. 
+It's essentially a console-based chat application that uses a simple Socket connection to transmit and receive data.
 
 #### Features:
 
@@ -65,13 +65,13 @@ If the connection is to be closed, both the users must enter `-x-` to stop the p
 
 #### Why Am I Doing This?
 
-Apart from serving as a productive way of ~~procrastinating~~ taking a break, Mercurys helps me keep in touch with
-Java during my otherwise non-programming related studies. Plus, I use this as a way to explore OOP concepts such as
+Apart from serving as a productive way of taking breaks, Mercurys helps me keep in touch with
+Java during my otherwise non-programming related studies. I use this as a way to explore OOP concepts such as
 encapsulation and inheritance, while also trying to to effectively implement them in real world scenarios.
 
 #### Plans For The Future:
 
-I have many new features and upgrades planned for this project, such as:
+I have many new features and upgrades planned for this project, including:
 
 * Enabling WAN connections
 * Upgrading to multi-client chatting
