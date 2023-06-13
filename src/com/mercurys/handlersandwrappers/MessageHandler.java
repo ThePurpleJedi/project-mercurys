@@ -2,7 +2,9 @@ package com.mercurys.handlersandwrappers;
 
 import com.mercurys.encryption.Encryption;
 
-import java.io.*;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.text.MessageFormat;
 import java.util.Scanner;
 
@@ -29,11 +31,14 @@ public class MessageHandler {
     }
 
     public void sendMessage(String outGoingLine) throws IOException {
-        switch (outGoingLine.split(" +")[0]) {
-            case "/image" -> this.handleImageUpload(outGoingLine.substring(7));
-            case "/pdf" -> this.handlePDFUpload(outGoingLine.substring(5));
-            default -> writeMessage(outGoingLine);
-        }
+        if (outGoingLine.startsWith("/")) {
+            switch (outGoingLine.split(" +")[0]) {
+                case "/image" -> this.handleImageUpload(outGoingLine.substring(7));
+                case "/pdf" -> this.handlePDFUpload(outGoingLine.substring(5));
+                default -> writeMessage("Error! -x-");
+            }
+        } else
+            writeMessage(outGoingLine);
     }
 
     private void writeMessage(String outGoingLine) {

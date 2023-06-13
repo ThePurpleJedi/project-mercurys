@@ -1,6 +1,7 @@
 package com.mercurys;
 
-import com.mercurys.handlersandwrappers.*;
+import com.mercurys.handlersandwrappers.DeviceWrapper;
+import com.mercurys.handlersandwrappers.ServerSocketHandler;
 
 import java.io.IOException;
 import java.util.Scanner;
@@ -34,7 +35,7 @@ public class MercurysServer {
     }
 
     private String getServerName() {
-        System.out.println("Enter server name: ");
+        System.out.println("Enter unique username: ");
         return sc.nextLine();
     }
 

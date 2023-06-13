@@ -1,7 +1,9 @@
 package com.mercurys.readers;
 
-import com.mercurys.encryption.*;
-import com.mercurys.handlersandwrappers.*;
+import com.mercurys.encryption.Decryption;
+import com.mercurys.encryption.KeyWrapper;
+import com.mercurys.handlersandwrappers.ImageHandler;
+import com.mercurys.handlersandwrappers.PDFHandler;
 
 import java.awt.image.BufferedImage;
 import java.io.*;
@@ -67,7 +69,7 @@ public class MediaReaderThread extends Thread {
         switch (getFileType(inBoundLine)) {
             case "/image" -> this.downloadIncomingImage();
             case "/pdf" -> this.downloadIncomingPDF();
-            case "Woops" -> System.out.println("woops");
+            case "Error! -x-" -> System.out.println("Error!");
             default -> System.out.println("Unknown command!");
         }
     }
