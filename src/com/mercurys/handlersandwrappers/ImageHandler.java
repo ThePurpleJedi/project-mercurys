@@ -4,8 +4,10 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.ByteBuffer;
-import java.nio.file.*;
-import java.text.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public class ImageHandler {

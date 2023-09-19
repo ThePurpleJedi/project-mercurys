@@ -3,7 +3,9 @@ package com.mercurys.textmessaging;
 import com.mercurys.encryption.Encryption;
 import com.mercurys.readers.TextReaderThread;
 
-import java.io.*;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
 

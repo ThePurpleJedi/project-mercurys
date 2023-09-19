@@ -87,7 +87,7 @@ public class MediaReaderThread extends Thread {
     }
 
     private void notifyUserOfDownloadLocation(String downloadPath) {
-        System.out.println("[M. Console]: The image file has been downloaded as "
+        System.out.println("[M. Console]: The file has been downloaded as "
                 + downloadPath);
     }
 
