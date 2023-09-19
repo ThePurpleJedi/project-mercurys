@@ -1,6 +1,7 @@
 package com.mercurys;
 
-import com.mercurys.handlersandwrappers.*;
+import com.mercurys.handlersandwrappers.ClientSocketHandler;
+import com.mercurys.handlersandwrappers.DeviceWrapper;
 
 import java.io.IOException;
 import java.util.Scanner;

@@ -18,7 +18,7 @@ public class Encryption {
     }
 
     public String encrypt(final String message) {
-        if (message == null || message.equals("")) {
+        if (message == null || message.isEmpty()) {
             return "";
         }
         String[] words = initialiseVariables(message);
