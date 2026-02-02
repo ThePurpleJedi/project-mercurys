@@ -7,7 +7,7 @@ It's essentially a console-based chat application that uses a simple Socket conn
 
 #### Features:
 
-* Uses a custom encryption-decryption algorithm [developed by myself]
+* Uses a custom encryption-decryption algorithm [developed by myself] (this is not meant to be secure, not by a long shot haha)
 * Uses multi-threading to simultaneously read and write messages
 * Users can send and receive files
 * Works on a LAN connection [as of yet]
@@ -18,7 +18,7 @@ It's quite simple to get the server/client connection up and running:
 
 #### _To start the connection:_
 
-The first step is to download the project and open it in any IDE.
+The first step is to download the project :P
 
 _For hosting the server:_
 
